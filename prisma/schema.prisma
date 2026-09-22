@@ -1,0 +1,173 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  name         String
+  passwordHash String
+  role         String          @default("Lead Engineer")
+  avatar       String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  projects     Project[]
+  activities   ActivityEvent[]
+}
+
+model Project {
+  id           String          @id @default(uuid())
+  name         String
+  description  String
+  objective    String
+  status       String          @default("ACTIVE") // ACTIVE, PAUSED, HANDOVER_READY, COMPLETED
+  priority     String          @default("HIGH")   // LOW, MEDIUM, HIGH, CRITICAL
+  teamMembers  String          @default("[]")     // JSON array of team member strings
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  workContexts WorkContext[]
+  tasks        Task[]
+  decisions    Decision[]
+  procedures   Procedure[]
+  handovers    Handover[]
+  activities   ActivityEvent[]
+  assistantLogs AssistantQuery[]
+}
+
+model WorkContext {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  category    String   // NOTE, PROGRESS, BLOCKED, ATTEMPT, RESOURCE
+  title       String
+  content     String
+  tags        String   @default("[]") // JSON array of tags
+  files       String   @default("[]") // JSON array of file metadata
+  author      String   @default("Lead Engineer")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, BLOCKED
+  priority    String   @default("MEDIUM")  // LOW, MEDIUM, HIGH
+  assignee    String?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Decision {
+  id                String   @id @default(uuid())
+  projectId         String
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title             String
+  context           String
+  optionsConsidered String   @default("[]") // JSON array of options
+  selectedOption    String
+  reasoning         String
+  expectedImpact    String
+  status            String   @default("ACCEPTED") // PROPOSED, ACCEPTED, SUPERSEDED, REJECTED
+  author            String   @default("Lead Architect")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Procedure {
+  id          String          @id @default(uuid())
+  projectId   String
+  project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  category    String          @default("DEPLOYMENT") // DEPLOYMENT, HARDWARE_DIAGNOSTIC, KERNEL_FLASH, RECOVERY
+  status      String          @default("IN_REVIEW")  // DRAFT, IN_REVIEW, VERIFIED, DEVIATION_ALERT
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  steps       ProcedureStep[]
+}
+
+model ProcedureStep {
+  id                 String                 @id @default(uuid())
+  procedureId        String
+  procedure          Procedure              @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  stepOrder          Int
+  title              String
+  expectedAction     String
+  evidenceRequired   Boolean                @default(false)
+  reviewStatus       String                 @default("PENDING") // PENDING, VERIFIED, DEVIATION_DETECTED, SKIPPED
+  observationNotes   String?
+  verificationOutcome String?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+
+  observations       ProcedureObservation[]
+}
+
+model ProcedureObservation {
+  id                 String        @id @default(uuid())
+  stepId             String
+  step               ProcedureStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  imageUrl           String?
+  observationText    String
+  confidence         Float         @default(0.92)
+  deviationDetected  Boolean       @default(false)
+  deviationDetails   String?
+  verificationStatus String        @default("PENDING_HUMAN_CONFIRMATION") // CONFIRMED, REJECTED, PENDING_HUMAN_CONFIRMATION
+  createdAt          DateTime      @default(now())
+}
+
+model Handover {
+  id                    String   @id @default(uuid())
+  projectId             String
+  project               Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title                 String
+  executiveSummary      String
+  completedWork         String   @default("[]") // JSON array
+  pendingWork           String   @default("[]") // JSON array
+  blockers              String   @default("[]") // JSON array
+  keyDecisions          String   @default("[]") // JSON array
+  failedApproaches      String   @default("[]") // JSON array
+  recommendedNextSteps  String   @default("[]") // JSON array
+  verificationChecklist String   @default("[]") // JSON array of items { item: string, checked: boolean }
+  exportedAt            DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model ActivityEvent {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type        String   // CONTEXT_ADDED, DECISION_RECORDED, PROCEDURE_CHECKED, HANDOVER_GENERATED, STATUS_CHANGED, TASK_COMPLETED
+  title       String
+  description String
+  metadata    String   @default("{}") // JSON metadata
+  createdAt   DateTime @default(now())
+}
+
+model AssistantQuery {
+  id                  String   @id @default(uuid())
+  projectId           String
+  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  question            String
+  answer              String
+  citations           String   @default("[]") // JSON array of citations { type, id, title, snippet }
+  missingContextNotes String?
+  createdAt           DateTime @default(now())
+}
