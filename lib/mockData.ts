@@ -86,45 +86,12 @@ export const mbaTasks: Task[] = [
       { id: 'st-6', text: 'Define target customer segment', completed: false },
       { id: 'st-7', text: 'Analyze competitors', completed: true },
       { id: 'st-8', text: 'Conduct SWOT analysis', completed: true },
-      { id: 'st-9', text: 'Estimate market opportunity (TAM/SAM/SOM)', completed: false },
+      { id: 'st-9', text: 'Estimate market opportunity', completed: false },
       { id: 'st-10', text: 'Compare pricing strategies', completed: false },
       { id: 'st-11', text: 'Develop positioning strategy', completed: false },
       { id: 'st-12', text: 'Prepare final presentation', completed: false },
     ],
     updatedAt: 'Today, 2:15 PM'
-  },
-  {
-    id: 't-3',
-    title: 'Competitor Analysis — Indian EV Market',
-    project: 'MBA Strategic Management',
-    owner: 'MBA Student',
-    status: 'Completed',
-    priority: 'High',
-    progress: 100,
-    description: 'Research Tata, Ola, and MG Motor EV product lines, pricing, and market positioning.',
-    subtasks: [
-      { id: 'st-13', text: 'Tata Nexon EV pricing & features', completed: true },
-      { id: 'st-14', text: 'Ola S1 Pro analysis', completed: true },
-      { id: 'st-15', text: 'MG ZS EV analysis', completed: true },
-    ],
-    updatedAt: 'Today, 1:45 PM'
-  },
-  {
-    id: 't-4',
-    title: 'SWOT Analysis — New EV Brand',
-    project: 'MBA Strategic Management',
-    owner: 'MBA Student',
-    status: 'Completed',
-    priority: 'Medium',
-    progress: 100,
-    description: 'Map strengths, weaknesses, opportunities, and threats for entering the Indian EV market.',
-    subtasks: [
-      { id: 'st-16', text: 'Strengths mapping', completed: true },
-      { id: 'st-17', text: 'Weaknesses identified', completed: true },
-      { id: 'st-18', text: 'Opportunities in Tier-2 cities', completed: true },
-      { id: 'st-19', text: 'Threats from incumbents', completed: true },
-    ],
-    updatedAt: 'Today, 11:30 AM'
   }
 ];
 
@@ -138,17 +105,6 @@ export const mbaDecisions: Decision[] = [
     reasonRejected: 'The segment lacked a clearly defined purchasing profile and made marketing efforts too diffuse.',
     selectedApproach: 'Urban professionals aged 25–40 seeking affordable premium EVs',
     evidence: 'Market research shows this demographic has the highest intent-to-purchase and disposable income for home charging setups.',
-    date: 'Oct 15, 2026'
-  },
-  {
-    id: 'DEC-02',
-    title: 'Premium Affordable Pricing Strategy',
-    status: 'PROPOSED',
-    problem: 'Define a price point that is competitive with incumbents while maintaining brand premium perception.',
-    rejectedOption: 'Value-budget pricing below ₹10L',
-    reasonRejected: 'Budget positioning would conflict with the target segment\'s aspiration for premium products and reduce brand equity.',
-    selectedApproach: 'Premium-affordable bracket between ₹12–16L with flexible financing',
-    evidence: 'Competitor analysis shows 68% of intent-to-buy professionals prefer the ₹12–18L range for first EV purchase.',
     date: 'Oct 15, 2026'
   }
 ];

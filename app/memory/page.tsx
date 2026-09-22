@@ -95,7 +95,7 @@ export default function WorkMemory() {
               <div className="w-full">
                 <p className="text-xs font-bold uppercase tracking-wider text-textMuted mb-1">Last Command</p>
                 <div className="bg-background border border-border p-3 rounded font-mono text-sm text-primary w-full">
-                  &gt; {memory.lastCommand}
+                  {memory.lastCommand}
                 </div>
               </div>
             </motion.div>
